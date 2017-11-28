@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.edu.ouc.photopicker">
+    <application>
+        <activity
+            android:name="com.edu.ouc.photopicker.PhotoPickerActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.edu.ouc.photopicker.PhotoPreviewActivity" />
+    </application>
+    <!--拍照权限-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+</manifest>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TaskTracking</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="accountName_empty">用户名为空</string>
+    <string name="accountpassword_empty">密码为空</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+         与顺序有关。最外层一定要放在最前面。最里层放在里面，
+         不然会被遮挡。也与item中设置的值大小有关系
+-->
+    <!-- 最外层 -->
+    <item>
+        <shape>
+            <solid android:color="@color/login_btn" />
+        </shape>
+    </item>
+ <!--   &lt;!&ndash; 中间层 &ndash;&gt;
+    <item
+        android:bottom="15dp"
+        android:left="15dp"
+        android:right="15dp"
+        android:top="15dp">
+        <shape>
+            <solid android:color="#ffffff" />
+        </shape>
+    </item>-->
+    <!-- 最里层 -->
+    <item
+        android:bottom="3dp"
+        android:left="3dp"
+        android:right="3dp"
+        android:top="3dp">
+        <shape>
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+
+</layer-list>
