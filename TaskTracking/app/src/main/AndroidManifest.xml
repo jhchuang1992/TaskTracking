@@ -17,7 +17,10 @@
         <!--登录界面-->
         <activity
             android:name="com.edu.ouc.activity.LoginActivity">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!--欢迎界面-->
         <activity
@@ -43,10 +46,6 @@
         <!--班长派发任务给职工的详情界面-->
         <activity
             android:name="com.edu.ouc.activity.PaiFaActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!--上传任务总结界面-->
         <activity

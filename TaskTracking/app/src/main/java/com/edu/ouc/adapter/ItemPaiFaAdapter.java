@@ -53,14 +53,17 @@ public class ItemPaiFaAdapter extends BaseAdapter {
             hd = new ViewHoder();
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             view = layoutInflater.inflate(R.layout.item_paifa, null);
-            hd.textView = (TextView) view.findViewById(R.id.text_title);
+            hd.text_unit = (TextView) view.findViewById(R.id.text_unit);
+            hd.text_truename = (TextView) view.findViewById(R.id.text_truename);
+            hd.text_userid = (TextView) view.findViewById(R.id.text_userid);
             hd.checkBox = (CheckBox) view.findViewById(R.id.ckb);
             view.setTag(hd);
         }
         UserInfoModel mModel = data.get(i);
         hd = (ViewHoder) view.getTag();
-        hd.textView.setText(mModel.getTruename());
-        Log.e("myadapter", mModel.getTruename() + "------" + mModel.ischeck());
+        hd.text_unit.setText(mModel.getUnit());
+        hd.text_truename.setText(mModel.getTruename());
+        hd.text_userid.setText(String.valueOf(mModel.getId()));
         final ViewHoder hdFinal = hd;
         hd.checkBox.setChecked(mModel.ischeck());
         view.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +95,9 @@ public class ItemPaiFaAdapter extends BaseAdapter {
     }
 
     class ViewHoder {
-        TextView textView;
+        TextView text_unit;//单位
+        TextView text_truename; //真实姓名
+        TextView text_userid; //用户id
         CheckBox checkBox;
     }
 }

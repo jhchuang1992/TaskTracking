@@ -8,18 +8,33 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:weightSum="3" >
         <TextView
-            android:id="@+id/text_title"
+            android:id="@+id/text_unit"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="1"/>
+        <TextView
+            android:id="@+id/text_truename"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="1"/>
+        <TextView
+            android:id="@+id/text_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="1"/>
         <CheckBox
             android:id="@+id/ckb"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:clickable="false"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 </LinearLayout>

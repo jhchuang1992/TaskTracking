@@ -249,7 +249,7 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
                         netWorkUtils.isNetworkConnected(getApplicationContext());
                         if (netWorkUtils.isNetworkConnected(getApplicationContext()) == false) { //若网络未连接
                             handler.sendEmptyMessage(1);//发送消息到handler，提示未连接网络
-                        } else { //若网络已连接，则判断用户名和密码是否都不为空
+                        } else { //若网络已连接
                             TaskInfoModel taskInfoModel = new TaskInfoModel();
                             taskInfoModel.setTask_name(editText_newtask_taskName.getText().toString().trim());//任务名称
                             taskInfoModel.setTask_info(editText_newtask_taskinfo.getText().toString().trim());//任务详情

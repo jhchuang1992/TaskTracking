@@ -46,6 +46,7 @@ public class TaskInfoBanZhangActivity extends Activity implements View.OnClickLi
     private Button button__taskinfo_commit,button__taskinfo_paifa;
     private String taskInfo_status; //任务状态
     private TaskInfoModel taskinfoModel; //上一个界面传过来的任务信息
+    private TaskScheduleModel taskScheduleModelToNext; //用于传递给派发任务
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,11 +153,13 @@ public class TaskInfoBanZhangActivity extends Activity implements View.OnClickLi
                                         AddDataToServer addDataToServer = new AddDataToServer("http://10.0.2.2:8080/TaskTrackingService/insertTaskSchedule.do",jsontaskScheduleModel);
                                         if (addDataToServer.getContent().equals("error")) {
                                             handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
-                                        } else if (addDataToServer.getContent().equals("1")) {
-                                            handler.sendEmptyMessage(2);//发送消息到handler，提示接收任务成功
-                                            button__taskinfo_paifa.setText("派发任务");
-                                        }else if (addDataToServer.getContent().equals("0")) {
+                                        } else if (addDataToServer.getContent().equals("0")) {
                                             handler.sendEmptyMessage(3);//发送消息到handler，提示接收任务失败
+                                        }else{
+                                            handler.sendEmptyMessage(2);//发送消息到handler，提示接收任务成功
+                                            taskScheduleModelToNext.setId(Integer.valueOf(addDataToServer.getContent()));
+                                            taskScheduleModelToNext.setUnit(PublicShareUserinfo.unit);
+                                            button__taskinfo_paifa.setText("派发任务");
                                         }
                                 } catch (Exception e) {
                                     Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
@@ -170,47 +173,12 @@ public class TaskInfoBanZhangActivity extends Activity implements View.OnClickLi
                     // TODO Auto-generated method stub
                 }
             }).show();//在按键响应事件中显示此对话框
-        }else if(button__taskinfo_paifa.getText().equals("派发任务")){
-            AlertDialog.Builder builder = new AlertDialog.Builder(TaskInfoBanZhangActivity.this);
-            builder.setTitle("爱好");
-            final String[] hobbies = {"篮球", "足球", "网球", "斯诺克"};
-            //    设置一个单项选择下拉框
-            /**
-             * 第一个参数指定我们要显示的一组下拉多选框的数据集合
-             * 第二个参数代表哪几个选项被选择，如果是null，则表示一个都不选择，如果希望指定哪一个多选选项框被选择，
-             * 需要传递一个boolean[]数组进去，其长度要和第一个参数的长度相同，例如 {true, false, false, true};
-             * 第三个参数给每一个多选项绑定一个监听器
-             */
-            builder.setMultiChoiceItems(hobbies, null, new DialogInterface.OnMultiChoiceClickListener()
-            {
-                StringBuffer sb = new StringBuffer(100);
-                @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked)
-                {
-                    if(isChecked)
-                    {
-                        sb.append(hobbies[which] + ", ");
-                    }
-                    Toast.makeText(TaskInfoBanZhangActivity.this, "爱好为：" + sb.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-
-                }
-            });
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-
-                }
-            });
-            builder.show();
+        }else if(button__taskinfo_paifa.getText().equals("派发任务")){ //若此时为派发任务，则转向派发任务
+           Intent intent = new Intent(getApplicationContext(), PaiFaActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("taskschedule", taskScheduleModelToNext);
+            intent.putExtras(bundle);
+            getApplicationContext().startActivity(intent);
         }
     }
 

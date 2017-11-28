@@ -1,11 +1,13 @@
 package com.edu.ouc.model;
 
+import java.io.Serializable;
+
 /**
  * Created by JHC on 2017/11/28.
  * 班长类表
  */
 
-public class TaskScheduleModel {
+public class TaskScheduleModel implements Serializable {
     /**
      *
      */
