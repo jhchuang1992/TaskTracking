@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.edu.ouc.dialog.UpLoadingDialog;
 import com.edu.ouc.function.UpLoadFileToServer;
+import com.edu.ouc.model.PublicShareUserinfo;
+import com.edu.ouc.model.TaskScheduleModel;
 import com.edu.ouc.permission.PermisionUtils;
 import com.edu.ouc.photopicker.ImageCaptureManager;
 import com.edu.ouc.photopicker.PhotoPickerActivity;
@@ -61,12 +64,15 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
     private String TAG =UpLoadSummaryActivity.class.getSimpleName();
     private UpLoadImageAdapter upLoadImageAdapter;
     private Button button_uploadsummary_commit; //提交报告按钮
+    private EditText editText_upload_taskname,editText_upload_taskinfo,editText_upload_remarks;
     private ProgressBar progressBar_uploadsummary_progress; //进度条
     private UpLoadingDialog dialog; //弹框
+    private int Lastid=0;  //上一个窗体传递过来的id
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uploadsummary);
+        Lastid = (int) getIntent().getSerializableExtra("taskid");
         //检测读写权限
         PermisionUtils.verifyStoragePermissions(this);
         gridView_uploadsummary_img=(GridView)findViewById(R.id.gv_uploadsummary_img);
@@ -99,6 +105,9 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
         button_uploadsummary_commit=(Button)findViewById(R.id.btn_uploadsummary_commit);
         button_uploadsummary_commit.setOnClickListener(this);
         progressBar_uploadsummary_progress=(ProgressBar)findViewById(R.id.pgb_uploadsummary_progress);
+        editText_upload_taskname=(EditText)findViewById(R.id.edt_upload_taskname);//报告主题
+        editText_upload_taskinfo=(EditText)findViewById(R.id.edt_upload_taskinfo); //报告
+        editText_upload_remarks=(EditText)findViewById(R.id.edt_upload_remarks); //报告备注
     }
     @Override
     public void onClick(View v) {
@@ -138,8 +147,12 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
                 handler.sendEmptyMessage(2);
                 if (imagePaths.size()>0) { //若有数据
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("username", "宋新良");//上传的用户名,没有不用传参数
-                    params.put("userId", "对应的Userid");//上传的用户名,没有不用传参数
+                    params.put("userid", String.valueOf(Lastid));//对应taskschedule和tasktake表的id
+                    params.put("username", PublicShareUserinfo.lgname);//用户名
+                    params.put("role", PublicShareUserinfo.role);//描述角色
+                    params.put("description_title", editText_upload_taskname.getText().toString().trim());//描述主题
+                    params.put("description_info", editText_upload_taskinfo.getText().toString().trim());//描述正文
+                    params.put("description_remarks", editText_upload_remarks.getText().toString().trim());//描述备注
                     switch (imagePaths.size()){
                         case 2:
                             OkHttpUtils.post()//
@@ -218,6 +231,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
 
         @Override
         public void onResponse(String response, int id) {
+            System.out.println(response);
             dialog.dismiss();//取消显示进度框
             Toast.makeText(getApplicationContext(), "提交任务成功", Toast.LENGTH_LONG).show();
             //tv_result.setText("onResponse:" + response);

@@ -8,11 +8,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@android:style/Theme.NoTitleBar">
         <!--主界面-->
         <activity
             android:name="com.edu.ouc.activity.MainActivity">
-
         </activity>
         <!--登录界面-->
         <activity
@@ -37,7 +36,7 @@
         </activity>
         <!--班长-任务详情界面-->
         <activity
-            android:name="com.edu.ouc.activity.TaskInfoBanZhangActivity">
+            android:name="com.edu.ouc.activity.ChatTaskInfoBanZhangActivity">
         </activity>
         <!--员工-任务详情界面-->
         <activity

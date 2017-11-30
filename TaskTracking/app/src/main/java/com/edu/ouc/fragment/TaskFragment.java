@@ -10,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.edu.ouc.adapter.TaskListViewAdapter;
+import com.edu.ouc.adapter.ChatPublicTaskListViewAdapter;
 import com.edu.ouc.model.TaskInfoModel;
-import com.edu.ouc.model.TaskShowModel;
 import com.edu.ouc.tasktracking.R;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class TaskFragment extends Fragment {
     private Activity activity;
     private ListView listView;
     private List<TaskInfoModel> taskInfoModelList; //任务集合对象
-    private TaskListViewAdapter adapter; //自定义适配器对象
+    private ChatPublicTaskListViewAdapter adapter; //自定义适配器对象
     public TaskFragment() {
         // Required empty public constructor
     }
@@ -45,7 +44,7 @@ public class TaskFragment extends Fragment {
         /**
          * 实例化Adapter对象(注意:必须要写在在getDatas() 方法后面,不然datas中没有数据)
          */
-        adapter = new TaskListViewAdapter(getActivity(), taskInfoModelList);
+        adapter = new ChatPublicTaskListViewAdapter(getActivity(), taskInfoModelList);
         //将适配器变量的内容加载到List里(也就是把那一堆新闻都放了进去)
         listView.setAdapter(adapter);
     }

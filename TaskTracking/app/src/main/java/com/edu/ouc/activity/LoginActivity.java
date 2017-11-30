@@ -136,13 +136,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     //关闭当前界面
                     finish();
                 }
-            /*JSONObject jsonObject=new JSONObject(connectServer.getContent());
-            JSONArray jsonArray=jsonObject.getJSONArray("data");
-            List<UserInfoModel> userInfoModelList=new ArrayList<UserInfoModel>();
-            //这两句代码必须的，为的是初始化出来gson这个对象，才能拿来用
-            Type type1=new TypeToken<List<UserInfoModel>>(){}.getType();
-            userInfoModelList=new Gson().fromJson(jsonArray.toString(),type1);
-            System.out.println("----1212-----"+userInfoModelList.size());*/
         } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_SHORT).show();
             e.printStackTrace();

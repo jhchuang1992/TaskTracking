@@ -275,65 +275,78 @@ public class PaiFaActivity extends AppCompatActivity implements View.OnClickList
                 long minuteInterrval=0;//间隔分钟
                 if (userInfoModelList.size()==0) {
                     Toast.makeText(this, "您部门下还没有职员，无法派发任务", Toast.LENGTH_SHORT).show();
-                }else if(!userInfoModelList.contains("true")) {
-                    Toast.makeText(this, "请选择委派的员工", Toast.LENGTH_SHORT).show();
-                } else if (textView_paifa_endTime.getText().toString().trim().equals("请选择时间")){
-                    Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();
-                } else{
-                    try {
-                        String currentDate=simpleDateFormat.format(new Date());
-                        Date nowDate=simpleDateFormat.parse(currentDate);
-                        Date endDate=simpleDateFormat.parse(textView_paifa_endTime.getText().toString());
-                        minuteInterrval=(endDate.getTime()-nowDate.getTime())/(1000*60);//间隔分钟，若小于0，则说明结束日期早于当前日期
-                    } catch (ParseException e) {
-                        Toast.makeText(this, "时间转换失败，请告知管理员", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
+                }else{
+                    int selectNum=0;
+                    for (int i=0;i<userInfoModelList.size();i++){
+                        if(userInfoModelList.get(i).ischeck()){  //若此员工被选中
+                            selectNum=selectNum+1;
+                            break;
+                        }
                     }
-                    try {
-                        if (minuteInterrval<=60){
-                            Toast.makeText(this, "任务时长最少为1小时", Toast.LENGTH_SHORT).show();
-                        }else{  //将分配的信息更新到表中
-                            TaskScheduleModel taskscheduleLast = (TaskScheduleModel) getIntent().getSerializableExtra("taskschedule");
-                            String take_person=","; //格式：,5,10,2，
-                            String confirm=","; //格式：,5：0,10：0,2：0，
-                            for (int i=0;i<userInfoModelList.size();i++){
-                                if(userInfoModelList.get(i).ischeck()){  //若此员工被选中
-                                    take_person=take_person+String.valueOf(userInfoModelList.get(i).getId())+",";
-                                    confirm=confirm+String.valueOf(userInfoModelList.get(i).getId())+":0,";
+                    if (selectNum==0){
+                        Toast.makeText(this, "请选择委派的员工", Toast.LENGTH_SHORT).show();
+                    } else if (textView_paifa_endTime.getText().toString().trim().equals("请选择时间")){
+                        Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();
+                    } else{
+                        try {
+                            String currentDate=simpleDateFormat.format(new Date());
+                            Date nowDate=simpleDateFormat.parse(currentDate);
+                            Date endDate=simpleDateFormat.parse(textView_paifa_endTime.getText().toString());
+                            minuteInterrval=(endDate.getTime()-nowDate.getTime())/(1000*60);//间隔分钟，若小于0，则说明结束日期早于当前日期
+                        } catch (ParseException e) {
+                            Toast.makeText(this, "时间转换失败，请告知管理员", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (minuteInterrval<=60){
+                                Toast.makeText(this, "任务时长最少为1小时", Toast.LENGTH_SHORT).show();
+                            }else{  //将分配的信息更新到表中
+                                TaskScheduleModel taskscheduleLast = (TaskScheduleModel) getIntent().getSerializableExtra("taskschedule");
+                                String take_person=","; //格式：,5,10,2，
+                                String confirm=","; //格式：,5：0,10：0,2：0，
+                                for (int i=0;i<userInfoModelList.size();i++){
+                                    if(userInfoModelList.get(i).ischeck()){  //若此员工被选中
+                                        take_person=take_person+String.valueOf(userInfoModelList.get(i).getId())+",";
+                                        confirm=confirm+String.valueOf(userInfoModelList.get(i).getId())+":0,";
+                                    }
                                 }
-                            }
-                            if (netWorkUtils.isNetworkConnected(getApplicationContext()) == false) { //若网络未连接
-                                handler.sendEmptyMessage(1);//发送消息到handler，提示未连接网络
-                            } else {
-                                TaskScheduleModel taskScheduleModel = new TaskScheduleModel();
-                                taskScheduleModel.setId(taskscheduleLast.getId());
-                                taskScheduleModel.setStatus("已派发");
-                                taskScheduleModel.setTake_person(take_person); //派发给个人的id
-                                taskScheduleModel.setConfirm(confirm); //个人确认状态
-                                taskScheduleModel.setTake_person_date(simpleDateFormat.format(new Date())); //派发给个人的时间
-                                taskScheduleModel.setTask_endDate(textView_paifa_endTime.getText().toString());  //派发给个人的截止时间
-                                taskScheduleModel.setPerson_remarks(editText_paifa_remarks.getText().toString().trim()); //派发给个人的备注
-                                Gson gson = new Gson();
-                                String jsontaskScheduleModel = gson.toJson(taskScheduleModel);
-                                AddDataToServer addDataToServer = new AddDataToServer("http://10.0.2.2:8080/TaskTrackingService/updateTaskSchedule.do",jsontaskScheduleModel);
-                                if (addDataToServer.getContent().equals("error")) {
-                                    handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
-                                } else if (addDataToServer.getContent().equals("1")) {
-                                    Toast.makeText(this, "派发任务成功", Toast.LENGTH_SHORT).show();
-                                }else if (addDataToServer.getContent().equals("0")) {
-                                    Toast.makeText(this, "派发任务失败", Toast.LENGTH_SHORT).show();
+                                if (netWorkUtils.isNetworkConnected(getApplicationContext()) == false) { //若网络未连接
+                                    handler.sendEmptyMessage(1);//发送消息到handler，提示未连接网络
+                                } else {
+                                    TaskScheduleModel taskScheduleModel = new TaskScheduleModel();
+                                    taskScheduleModel.setId(taskscheduleLast.getId());
+                                    taskScheduleModel.setStatus("已派发");
+                                    taskScheduleModel.setTake_person(take_person); //派发给个人的id
+                                    taskScheduleModel.setConfirm(confirm); //个人确认状态
+                                    taskScheduleModel.setTake_person_date(simpleDateFormat.format(new Date())); //派发给个人的时间
+                                    taskScheduleModel.setTask_endDate(textView_paifa_endTime.getText().toString());  //派发给个人的截止时间
+                                    taskScheduleModel.setPerson_remarks(editText_paifa_remarks.getText().toString().trim()); //派发给个人的备注
+                                    Gson gson = new Gson();
+                                    String jsontaskScheduleModel = gson.toJson(taskScheduleModel);
+                                    AddDataToServer addDataToServer = new AddDataToServer("http://10.0.2.2:8080/TaskTrackingService/updateTaskSchedule.do",jsontaskScheduleModel);
+                                    if (addDataToServer.getContent().equals("error")) {
+                                        handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
+                                    } else if (addDataToServer.getContent().equals("1")) {
+                                        Toast.makeText(this, "派发任务成功", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }else if (addDataToServer.getContent().equals("0")) {
+                                        Toast.makeText(this, "派发任务失败", Toast.LENGTH_SHORT).show();
+                                    }
+
+
                                 }
 
-
                             }
+                        } catch (Exception e) { //若出现异常，肯定是因为部门没有加载进来
+                            Toast.makeText(this, "哎呀，出错了。。。", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
 
-                            }
-                    } catch (Exception e) { //若出现异常，肯定是因为部门没有加载进来
-                        Toast.makeText(this, "哎呀，出错了。。。", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
                     }
-
                 }
+
+
+
             }
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();

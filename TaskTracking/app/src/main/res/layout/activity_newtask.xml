@@ -53,6 +53,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:background="@null"
                     android:hint="请输入任务名称(6-10个字符)"
                     android:padding="5.0dip"

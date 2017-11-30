@@ -200,7 +200,7 @@
                         android:layout_gravity="right"
                         android:background="@drawable/btn_item"
                         android:textColor="@color/gray"
-                        android:text="完成任务" />
+                        android:text="完成111任务" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -216,7 +216,7 @@
                         android:layout_gravity="right"
                         android:background="@drawable/btn_item"
                         android:textColor="@color/gray"
-                        android:text="接收任务" />
+                        android:text="接111收任务" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -232,15 +232,14 @@
                     android:layout_marginLeft="10dp"
                     android:text="任务进度" />
             </LinearLayout>
+            <com.edu.ouc.listview.PaiFaListView
+                android:id="@+id/lv_taskinfobanzhang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:orientation="vertical">
-            </LinearLayout>
-            <ListView
-                android:id="@+id/lv_taskinfobanzhang"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:orientation="vertical"></LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

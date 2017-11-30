@@ -22,6 +22,7 @@ public class TaskScheduleModel implements Serializable {
     private String commitdate; // 提交时间
     private String description_title; // 任务描述主题
     private String description_info; // 任务描述信息
+    private String description_remarks; //描述备注
     private String confirm; // '等待人员确认，用，分隔,5：0，10：0，2：0',
     private String take_person;//'派发给的人员id,用，分隔',
     private String take_unit; //派发给的第一个部门
@@ -182,5 +183,13 @@ public class TaskScheduleModel implements Serializable {
 
     public void setUnit_remarks(String unit_remarks) {
         this.unit_remarks = unit_remarks;
+    }
+
+    public String getDescription_remarks() {
+        return description_remarks;
+    }
+
+    public void setDescription_remarks(String description_remarks) {
+        this.description_remarks = description_remarks;
     }
 }
