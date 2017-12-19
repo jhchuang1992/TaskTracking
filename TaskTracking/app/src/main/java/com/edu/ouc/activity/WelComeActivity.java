@@ -13,8 +13,7 @@ import java.util.TimerTask;
 
 import com.edu.ouc.function.AutoMaticLogin;
 import com.edu.ouc.function.SysApplication;
-import com.edu.ouc.model.PublicShareUserinfo;
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 
 /**
  * Created by JHC on 2017/11/23.
@@ -38,12 +37,6 @@ public class WelComeActivity extends Activity {
             public void run(){
                 if (AutoMaticLogin.getInstance().hasUserInfo(context))//自动登录判断，SharePrefences中有数据，则跳转到主页，没数据则跳转到登录页
                 {
-                    PublicShareUserinfo.id=AutoMaticLogin.getInstance().getUserInfo(context).getId();
-                    PublicShareUserinfo.lgname=AutoMaticLogin.getInstance().getUserInfo(context).getLgname();
-                    PublicShareUserinfo.lgpwd=AutoMaticLogin.getInstance().getUserInfo(context).getLgpwd();
-                    PublicShareUserinfo.truename=AutoMaticLogin.getInstance().getUserInfo(context).getTruename();
-                    PublicShareUserinfo.role=AutoMaticLogin.getInstance().getUserInfo(context).getRole();
-                    PublicShareUserinfo.unit=AutoMaticLogin.getInstance().getUserInfo(context).getUnit();
                     mHandler.sendEmptyMessageDelayed(GO_HOME, 2000);
                 } else {
                     mHandler.sendEmptyMessageAtTime(GO_LOGIN, 2000);

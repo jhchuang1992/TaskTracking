@@ -1,56 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.edu.ouc.tasktracking">
+    package="com.edu.ouc">
 
     <application
+        android:name="com.edu.ouc.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar">
-        <!--主界面-->
+        <!--欢迎界面-->
         <activity
-            android:name="com.edu.ouc.activity.MainActivity">
-        </activity>
-        <!--登录界面-->
-        <activity
-            android:name="com.edu.ouc.activity.LoginActivity">
+            android:name="com.edu.ouc.activity.WelComeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--欢迎界面-->
+        <!--登录界面-->
         <activity
-            android:name="com.edu.ouc.activity.WelComeActivity">
+            android:name="com.edu.ouc.activity.LoginActivity">
+        </activity>
+        <!--注册界面-->
+        <activity
+            android:name="com.edu.ouc.activity.RegisterActivity">
+        </activity>
+        <!--忘记密码界面-->
+        <activity
+            android:name="com.edu.ouc.activity.ForgetPassWordActivity">
+        </activity>
+        <!--填写邮箱验证码界面-->
+        <activity
+            android:name="com.edu.ouc.activity.EmailCodeActivity">
+        </activity>
+        <!--重置密码界面-->
+        <activity
+            android:name="com.edu.ouc.activity.RePwdActivity">
+        </activity>
+        <!--主界面-->
+        <activity
+            android:name="com.edu.ouc.activity.MainActivity">
         </activity>
         <!--新建任务界面-->
         <activity
             android:name="com.edu.ouc.activity.NewTaskActivity">
 
         </activity>
-        <!--管理员-任务详情界面-->
+        <!--任务详情界面-->
         <activity
-            android:name="com.edu.ouc.activity.TaskInfoActivity">
+            android:name="com.edu.ouc.activity.PublicShowShecduleInfoActivity">
         </activity>
-        <!--班长-任务详情界面-->
         <activity
-            android:name="com.edu.ouc.activity.ChatTaskInfoBanZhangActivity">
+            android:name="com.edu.ouc.activity.AdminTaskInfoActivity">
         </activity>
-        <!--员工-任务详情界面-->
+        <!--班长界面-->
         <activity
-            android:name="com.edu.ouc.activity.TaskInfoYuanGongActivity">
+            android:name="com.edu.ouc.activity.BanZhangPublicActivity">
         </activity>
-        <!--班长派发任务给职工的详情界面-->
+        <!--班长派发界面-->
         <activity
             android:name="com.edu.ouc.activity.PaiFaActivity">
+        </activity>
+        <!--职员界面-->
+        <activity
+            android:name="com.edu.ouc.activity.YuanGongPublicActivity">
         </activity>
         <!--上传任务总结界面-->
         <activity
             android:name="com.edu.ouc.activity.UpLoadSummaryActivity">
-
         </activity>
+        <!--任务进度详情界面-->
         <activity
             android:name="com.edu.ouc.photopicker.PhotoPickerActivity"
             android:theme="@style/PhotoPickerTheme"
@@ -66,6 +86,33 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths"/>
         </provider>
+        <!--交接任务给部门界面-->
+        <activity
+            android:name="com.edu.ouc.activity.JiaoJieActivity">
+        </activity>
+        <!--显示报告详情界面-->
+        <activity
+            android:name="com.edu.ouc.activity.ShowSummaryActivity">
+        </activity>
+        <!--显示大图界面-->
+        <activity
+            android:name="com.edu.ouc.activity.BigImageActivity">
+        </activity>
+        <receiver
+            android:name="com.edu.ouc.MyReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTRATION" /> <!--Required  用户注册SDK的intent-->
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" /> <!--Required  用户接收SDK消息的intent-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /> <!--Required  用户接收SDK通知栏信息的intent-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" /> <!--Required  用户打开自定义通知栏的intent-->
+                <action android:name="cn.jpush.android.intent.ACTION_RICHPUSH_CALLBACK" /> <!--Optional 用户接受Rich Push Javascript 回调函数的intent-->
+                <action android:name="cn.jpush.android.intent.CONNECTION" /><!-- 接收网络变化 连接/断开 since 1.6.3 -->
+                <category android:name="com.edu.ouc" />
+            </intent-filter>
+        </receiver>
+
     </application>
     <!--访问网络权限-->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -77,4 +124,5 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <!--拍照权限-->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 </manifest>

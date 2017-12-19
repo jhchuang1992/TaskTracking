@@ -39,7 +39,7 @@ public class AddDataToServer {
     public AddDataToServer(String urlPath,String jsonData){
         URL url=null;
         try {
-            url=new URL(urlPath);
+            url=new URL("http://192.168.2.102:8080/TaskTrackingService/"+urlPath);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setConnectTimeout(3000);
             // 设置允许输出

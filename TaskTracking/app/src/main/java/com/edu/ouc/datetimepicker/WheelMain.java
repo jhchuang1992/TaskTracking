@@ -2,7 +2,7 @@ package com.edu.ouc.datetimepicker;
 
 import android.view.View;
 
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 
 import java.util.Arrays;
 import java.util.List;

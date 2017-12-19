@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
@@ -21,15 +22,14 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
         <TextView
+            android:id="@+id/tv_me_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:gravity="center"
-            android:text="张三"
             android:textSize="25dp"
             android:textColor="@color/white"/>
     </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -40,8 +40,85 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="任务统计"
-            android:textSize="20dp"/>
+            android:text="  个人信息"
+            style="@style/style_text" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/textVsi2ew11"
+            style="@style/style_text"
+            android:text="所属部门：" />
+        <TextView
+            android:id="@+id/tv_me_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/style_text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/textVsi"
+            style="@style/style_text"
+            android:text="       角色：" />
+        <TextView
+            android:id="@+id/tv_me_role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/style_text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tex"
+            style="@style/style_text"
+            android:text="注册邮箱：" />
+        <TextView
+            android:id="@+id/tv_me_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/style_text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/textVs"
+            style="@style/style_text"
+            android:text="联系方式：" />
+        <TextView
+            android:id="@+id/tv_me_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/style_text"/>
+    </LinearLayout>
+  <!--  <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/gray_cc"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  任务统计"
+            style="@style/style_text" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,7 +161,24 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="进行中5" />
-
+    </LinearLayout>-->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/login_background"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btn_me_exit"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="@color/login_btn"
+            android:gravity="center"
+            android:text="退出登录"
+            android:textColor="#fff"
+            android:textSize="20.0dp"/>
     </LinearLayout>
-
 </LinearLayout>

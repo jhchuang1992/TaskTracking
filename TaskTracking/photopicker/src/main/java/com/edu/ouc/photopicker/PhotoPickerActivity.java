@@ -3,6 +3,7 @@ package com.edu.ouc.photopicker;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -340,13 +342,20 @@ public class PhotoPickerActivity extends AppCompatActivity{
      * 选择相机
      */
     private void showCameraAction() {
-        try {
-            Intent intent = captureManager.dispatchTakePictureIntent();
-            startActivityForResult(intent, ImageCaptureManager.REQUEST_TAKE_PHOTO);
-        } catch (IOException e) {
-            Toast.makeText(mCxt, R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            //执行拍照
+            try {
+                Intent intent = captureManager.dispatchTakePictureIntent();
+                startActivityForResult(intent, ImageCaptureManager.REQUEST_TAKE_PHOTO);
+            } catch (IOException e) {
+                Toast.makeText(mCxt, R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        } else {//请求权限
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA },15);
         }
+
     }
 
     /**

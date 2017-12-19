@@ -6,14 +6,24 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 
 /**
  * Created by JHC on 2017/11/27.
  */
 
 public class UpLoadingDialog extends Dialog {
-    private TextView tv;
+    public String dialogText="加载中......";
+
+    public String getDialogText() {
+        return dialogText;
+    }
+
+    public void setDialogText(String dialogText) {
+        this.dialogText = dialogText;
+    }
+
+    public TextView tv;
     /**
      * style很关键
      */
@@ -25,7 +35,7 @@ public class UpLoadingDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_uploadsummary);
         tv = (TextView) findViewById(R.id.tv);
-        tv.setText("正在提交数据.....");
+        tv.setText(getDialogText());
         LinearLayout linearLayout = (LinearLayout) this.findViewById(R.id.llo_uploadsummary);
         linearLayout.getBackground().setAlpha(210);
     }

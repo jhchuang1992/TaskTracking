@@ -19,8 +19,9 @@ public class UserInfoModel implements Serializable {
     private String role; // 角色
     private String phone; // 电话
     private String unit; // 单位
+    private String apiid; //手机唯一标识
     private boolean Ischeck; //是否选中，用于班长派发任务给职员的时候
-
+    private String email; //邮箱地址
     public int getId() {
         return id;
     }
@@ -83,5 +84,17 @@ public class UserInfoModel implements Serializable {
 
     public void setIscheck(boolean ischeck) {
         Ischeck = ischeck;
+    }
+
+    public String getApiid() {return apiid;}
+
+    public void setApiid(String apiid) {this.apiid = apiid;}
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -32,13 +32,13 @@ public class SelectDataFromServer {
     }
 
     String content=null;
-    public SelectDataFromServer(String url){
+    public SelectDataFromServer(String urlPath){
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
         HttpGet httpGet= null;
-            httpGet = new HttpGet(url);
+            httpGet = new HttpGet("http://192.168.2.102:8080/TaskTrackingService/"+urlPath);
         HttpClient httpClient=new DefaultHttpClient();
         HttpParams params = null;
         params = httpClient.getParams();
@@ -47,13 +47,16 @@ public class SelectDataFromServer {
         try {
             HttpResponse hr=httpClient.execute(httpGet);
             InputStream inputStream=hr.getEntity().getContent();
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
             String line=null;
             while((line= bufferedReader.readLine()) !=null){
                 content=line;
             }
             inputStream.close();
             bufferedReader.close();
+            if (content.equals("{\"data\":[]}")){ //若内容是为空的，则返回@标识，标识为空
+                content="@";
+            }
         } catch (IOException e) {
             content="error";
             e.printStackTrace();

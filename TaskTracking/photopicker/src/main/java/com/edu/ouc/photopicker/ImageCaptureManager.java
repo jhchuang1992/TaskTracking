@@ -58,6 +58,7 @@ public class ImageCaptureManager {
                 } else {
                     uri = Uri.fromFile(photoFile);
                 }
+                takePictureIntent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
             }
         }

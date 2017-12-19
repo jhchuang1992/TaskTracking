@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <ScrollView
@@ -56,7 +57,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:background="@null"
-                    android:hint="请输入任务名称(6-10个字符)"
+                    android:hint="任务名称(1-20个字符)"
                     android:padding="5.0dip"
                     android:textColor="#ff3b3b3b"
                     android:textSize="16.0sp" >
@@ -112,7 +113,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
-                            android:hint="请输入任务详情(10-150个字符)"
+                            android:hint="任务详情(0-200个字符)"
                             android:inputType="textMultiLine"
                             android:padding="5.0dip"
                             android:textColor="#ff3b3b3b"
@@ -179,7 +180,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
-                            android:hint="请输入备注信息(0-150个字符)"
+                            android:hint="备注信息(0-200个字符)"
                             android:inputType="textMultiLine"
                             android:padding="5.0dip"
                             android:textColor="#ff3b3b3b"
@@ -195,11 +196,7 @@
                 android:orientation="vertical">
                 <Button
                     android:id="@+id/btn_newtask_paifa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:background="@drawable/btn_item"
-                    android:textColor="@color/gray"
+                    style="@style/style_button"
                     android:text="派发任务" />
             </LinearLayout>
             <LinearLayout

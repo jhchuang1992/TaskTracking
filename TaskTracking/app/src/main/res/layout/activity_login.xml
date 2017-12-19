@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/login_background"
+    android:gravity="center"
     android:orientation="vertical">
     <!-- 公司LOGO的LinearLayout -->
     <LinearLayout
@@ -12,7 +13,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
             android:gravity="center"
             android:text="SUNVIM"
             android:textColor="@color/red"
@@ -33,7 +33,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="10px"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:orientation="horizontal"
         android:padding="10sp"
@@ -60,7 +60,7 @@
         android:orientation="horizontal"
         android:padding="10sp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10px"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@color/white">
         <!-- 请输入密码的布局 -->
@@ -78,29 +78,69 @@
             android:textColor="#ff3b3b3b"
             android:textSize="16.0sp"/>
     </LinearLayout>
-    <Button
-        android:id="@+id/btn_login"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:paddingLeft="10dp"
-        android:background="@color/login_btn"
-        android:gravity="center"
-        android:text="登录"
-        android:textColor="#fff"
-        android:textSize="20.0sp"/>
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/login_background"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="@color/login_btn"
+            android:gravity="center"
+            android:text="登录"
+            android:textColor="#fff"
+            android:textSize="20.0dp"/>
+        </LinearLayout>
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/login_background"
         android:orientation="horizontal"
-        android:gravity="right">
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp">
         <TextView
+            android:id="@+id/tv_forget"
             android:layout_width="100dp"
             android:layout_height="56dp"
-            android:text="立即注册"
+            android:text="忘记密码"
             android:textSize="20dp"
+            android:gravity="center"
             android:textColor="#ff3b3b3b" />
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:text="|"
+                android:textSize="20dp"
+                android:textColor="#ff3b3b3b" />
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_register"
+                android:layout_width="100dp"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:text="注册账号"
+                android:textSize="20dp"
+                android:textColor="#ff3b3b3b" />
+        </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical"></LinearLayout>
 </LinearLayout>

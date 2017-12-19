@@ -4,12 +4,26 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.edu.ouc.tasktracking"
+        applicationId "com.edu.ouc"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //极光推送
+        ndk {
+            //选择要添加的对应cpu类型的.so库（不需要的删除即可）。
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: applicationId,
+                JPUSH_APPKEY :  "60f8c2f3289ac27266d1bc9b", //JPush上注册的包名对应的appkey（*换成你的*）
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+        ]
+        compileOptions {
+            encoding "UTF-8"
+        }
+
     }
     buildTypes {
         release {
@@ -22,11 +36,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.google.code.gson:gson:2.7' //使用Gson
+    compile 'com.google.code.gson:gson:2.7'
+    //使用Gson
     testCompile 'junit:junit:4.12'
     compile project(':photopicker')
     compile 'com.squareup.retrofit2:retrofit:2.0.0'
@@ -34,6 +49,14 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    //极光推送
+    compile 'cn.jiguang.sdk:jpush:3.0.9'  // 此处以JPush 3.0.9 版本为例。
+    compile 'cn.jiguang.sdk:jcore:1.1.7'  // 此处以JCore 1.1.7 版本为例。
+    //加载图片
+    compile files('src/main/libs/activation.jar')
+    compile files('src/main/libs/additionnal.jar')
+    compile files('src/main/libs/mail.jar')
 }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.edu.ouc.activity.PaiFaActivity;
 import com.edu.ouc.model.UserInfoModel;
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 
 import java.util.List;
 

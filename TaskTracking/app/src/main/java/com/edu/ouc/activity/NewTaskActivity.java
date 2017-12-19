@@ -3,7 +3,6 @@ package com.edu.ouc.activity;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,40 +17,37 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.edu.ouc.adapter.SpinnerArrayAdapter;
 import com.edu.ouc.datetimepicker.DateUtils;
 import com.edu.ouc.datetimepicker.JudgeDate;
 import com.edu.ouc.datetimepicker.ScreenInfo;
 import com.edu.ouc.datetimepicker.WheelMain;
-import com.edu.ouc.fragment.ChatFragment;
+import com.edu.ouc.dialog.UpLoadingDialog;
 import com.edu.ouc.function.AddDataToServer;
 import com.edu.ouc.function.AutoMaticLogin;
 import com.edu.ouc.function.NetWorkUtils;
 import com.edu.ouc.function.SelectDataFromServer;
 import com.edu.ouc.model.TaskInfoModel;
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by JHC on 2017/11/24.
@@ -59,6 +55,7 @@ import java.util.Locale;
  */
 
 public class NewTaskActivity extends Activity implements View.OnClickListener {
+    private UpLoadingDialog dialog; //弹框加载中
     private EditText editText_newtask_taskName,editText_newtask_taskinfo,editText_newtask_remarks;
     private RadioButton radioButton_newtask_hezuo,radioButton_newtask_time;
     private TextView textView_newtask_endTime;
@@ -66,6 +63,7 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
     private Spinner spinner_newtask_unit;
     private Button buttonnewtask_paifa;
     private boolean connectNet=false; //是否联网成功
+    private Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +80,7 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
         buttonnewtask_paifa=(Button)findViewById(R.id.btn_newtask_paifa);
         buttonnewtask_paifa.setOnClickListener(this);
         addUnitList();//查询部门list
+        context=this;
     }
 
     @Override
@@ -175,20 +174,30 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(getApplicationContext(), "网络未连接", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "网络未连接", Toast.LENGTH_LONG).show();
                     break;
                 case 2:
                     spinner_newtask_unit.setAdapter(adapter_unit);
                     break;
                 case 3:
-                    Toast.makeText(getApplicationContext(), "任务发布成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "任务发布成功", Toast.LENGTH_SHORT).show();
                     finish();
                     break;
                 case 4:
-                    Toast.makeText(getApplicationContext(), "任务发布失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "任务发布失败", Toast.LENGTH_SHORT).show();
+                    break;
+                case 5:
+                    dialog = new UpLoadingDialog(context);
+                    dialog.setCancelable(false); //设置这个对话框不能被用户按[返回键]而取消掉
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.setDialogText("派发任务中......");
+                    dialog.show();
+                    break;
+                case 6:
+                    dialog.dismiss();
                     break;
             }
         }
@@ -197,22 +206,17 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
         new Thread(){
             @Override
             public void run() {
-                //适配器
-                adapter_unit= new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, datas);
-                //设置样式
-                adapter_unit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                //加载适配器
-                spinner_newtask_unit.setAdapter(adapter_unit);
                         try {
                             NetWorkUtils netWorkUtils=new NetWorkUtils();
                             // 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
-                            netWorkUtils.isNetworkConnected(getApplicationContext());
-                            if(netWorkUtils.isNetworkConnected(getApplicationContext())==false){ //若网络未连接
+                            netWorkUtils.isNetworkConnected(context);
+                            if(netWorkUtils.isNetworkConnected(context)==false){ //若网络未连接
                                 handler.sendEmptyMessage(1);//发送消息到handler，提示未连接网络
                             }else{ //若网络已连接，则判断用户名和密码是否都不为空192.164.2.102
-                                SelectDataFromServer selectDataFromServer=new SelectDataFromServer("http://10.0.2.2:8080/TaskTrackingService/getUnitFormUserInfo.do?sql=where+1=1");
+                                SelectDataFromServer selectDataFromServer=new SelectDataFromServer("getUnitFormUserInfo.do?sql=where+role='班长'");
                                 if(selectDataFromServer.getContent().equals("error")){
                                     handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
+                                }else if (selectDataFromServer.getContent().equals("@")) { //若数据为空
                                 }else{
                                     connectNet=true;  //联网成功
                                     JSONObject jsonObject=new JSONObject(selectDataFromServer.getContent());
@@ -222,7 +226,7 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
                                     datas=new Gson().fromJson(jsonArray.toString(),type1);
                                     datas.add("全体");
                                     //适配器
-                                    adapter_unit= new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, datas);
+                                    adapter_unit = new SpinnerArrayAdapter(context, datas);
                                     //设置样式
                                     adapter_unit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     //加载适配器
@@ -246,14 +250,14 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
                     try {
                         NetWorkUtils netWorkUtils = new NetWorkUtils();
                         // 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
-                        netWorkUtils.isNetworkConnected(getApplicationContext());
-                        if (netWorkUtils.isNetworkConnected(getApplicationContext()) == false) { //若网络未连接
+                        netWorkUtils.isNetworkConnected(context);
+                        if (netWorkUtils.isNetworkConnected(context) == false) { //若网络未连接
                             handler.sendEmptyMessage(1);//发送消息到handler，提示未连接网络
                         } else { //若网络已连接
                             TaskInfoModel taskInfoModel = new TaskInfoModel();
                             taskInfoModel.setTask_name(editText_newtask_taskName.getText().toString().trim());//任务名称
                             taskInfoModel.setTask_info(editText_newtask_taskinfo.getText().toString().trim());//任务详情
-                            taskInfoModel.setTask_author("发布者"); //发布者
+                            taskInfoModel.setTask_author(AutoMaticLogin.getInstance().getUserInfo(context).getTruename()); //发布者
                             taskInfoModel.setTask_status("待接"); //任务状态
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                             String currentDate = simpleDateFormat.format(new Date());
@@ -267,19 +271,24 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
                             } else {
                                 taskInfoModel.setTask_type("同时"); //任务类型
                             }
+                            taskInfoModel.setTask_lgname(AutoMaticLogin.getInstance().getUserInfo(context).getLgname()); //任务发布者的登录名
                             Gson gson = new Gson();
                             String jsontaskInfoModel = gson.toJson(taskInfoModel);
-                            AddDataToServer addDataToServer = new AddDataToServer("http://10.0.2.2:8080/TaskTrackingService/insertTaskInfo.do",jsontaskInfoModel);
+                           handler.sendEmptyMessage(5); //显示弹框
+                            AddDataToServer addDataToServer = new AddDataToServer("insertTaskInfo.do",jsontaskInfoModel);
                             if (addDataToServer.getContent().equals("error")) {
+                                handler.sendEmptyMessage(6); //取消弹框
                                 handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
                             } else if (addDataToServer.getContent().equals("1")) {
+                                handler.sendEmptyMessage(6); //取消弹框
                                 handler.sendEmptyMessage(3);//发送消息到handler，提示新建任务成功
                             }else if (addDataToServer.getContent().equals("0")) {
+                                handler.sendEmptyMessage(6); //取消弹框
                                 handler.sendEmptyMessage(4);//发送消息到handler，提示新建任务失败
                             }
                         }
                     } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
+                        handler.sendEmptyMessage(0);//发送消息到handler，提示出错了
                         e.printStackTrace();
                     }
                 }
@@ -291,17 +300,17 @@ public class NewTaskActivity extends Activity implements View.OnClickListener {
         //获取当前时间
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
         long minuteInterrval=0;//间隔分钟
-        if (editText_newtask_taskName.getText().toString().trim().equals("")||editText_newtask_taskinfo.getText().toString().trim().equals("")) {
+        if (editText_newtask_taskName.getText().toString().trim().equals("")) {
             Toast.makeText(this, "请将任务填写完整", Toast.LENGTH_SHORT).show();
             return false;
-        }else if (editText_newtask_taskName.getText().toString().trim().length()<6||editText_newtask_taskName.getText().toString().trim().length()>10) {
-            Toast.makeText(this, "任务名称应在6-10个字符之间", Toast.LENGTH_SHORT).show();
+        }else if (editText_newtask_taskName.getText().toString().trim().length()<1||editText_newtask_taskName.getText().toString().trim().length()>20) {
+            Toast.makeText(this, "任务名称应在1-20个字符之间", Toast.LENGTH_SHORT).show();
             return false;
-        }else if (editText_newtask_taskinfo.getText().toString().trim().length()<10||editText_newtask_taskinfo.getText().toString().trim().length()>150) {
-            Toast.makeText(this, "任务详情应在10-150个字符之间", Toast.LENGTH_SHORT).show();
+        }else if (editText_newtask_taskinfo.getText().toString().trim().length()>200) {
+            Toast.makeText(this, "任务详情应在0-200个字符之间", Toast.LENGTH_SHORT).show();
             return false;
-        }else if (editText_newtask_remarks.getText().toString().trim().length()>150) {
-            Toast.makeText(this, "备注信息应在150个字符之内", Toast.LENGTH_SHORT).show();
+        }else if (editText_newtask_remarks.getText().toString().trim().length()>200) {
+            Toast.makeText(this, "备注信息应在200个字符之内", Toast.LENGTH_SHORT).show();
             return false;
         }else if (textView_newtask_endTime.getText().toString().trim().equals("请选择时间")){
             Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();

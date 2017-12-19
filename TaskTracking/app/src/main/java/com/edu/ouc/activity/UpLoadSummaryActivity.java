@@ -1,17 +1,13 @@
 package com.edu.ouc.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Process;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +22,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.edu.ouc.dialog.UpLoadingDialog;
-import com.edu.ouc.function.UpLoadFileToServer;
-import com.edu.ouc.model.PublicShareUserinfo;
-import com.edu.ouc.model.TaskScheduleModel;
+import com.edu.ouc.function.AutoMaticLogin;
 import com.edu.ouc.permission.PermisionUtils;
 import com.edu.ouc.photopicker.ImageCaptureManager;
 import com.edu.ouc.photopicker.PhotoPickerActivity;
@@ -36,7 +30,7 @@ import com.edu.ouc.photopicker.PhotoPreviewActivity;
 import com.edu.ouc.photopicker.SelectModel;
 import com.edu.ouc.photopicker.intent.PhotoPickerIntent;
 import com.edu.ouc.photopicker.intent.PhotoPreviewIntent;
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -55,7 +49,8 @@ import okhttp3.Request;
  * 上传报告
  */
 
-public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnClickListener{
+public class UpLoadSummaryActivity extends Activity implements View.OnClickListener{
+    private String address="http://192.168.2.102:8080/TaskTrackingService/";
     private GridView gridView_uploadsummary_img;
     private static final int REQUEST_CAMERA_CODE = 10;
     private static final int REQUEST_PREVIEW_CODE = 20;
@@ -68,10 +63,18 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
     private ProgressBar progressBar_uploadsummary_progress; //进度条
     private UpLoadingDialog dialog; //弹框
     private int Lastid=0;  //上一个窗体传递过来的id
+    private Context context;
+    String uid;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uploadsummary);
+        context=this;
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null)
+        {
+            uid = bundle.getString("uid");
+        }
         Lastid = (int) getIntent().getSerializableExtra("taskid");
         //检测读写权限
         PermisionUtils.verifyStoragePermissions(this);
@@ -113,7 +116,11 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_uploadsummary_commit:
-                commit_imag();
+                if (imagePaths.size()==1) { //若有数据
+                    Toast.makeText(context, "请至少上传一张照片。", Toast.LENGTH_SHORT).show();
+                }else{
+                    commit_imag();
+                }
                 break;
         }
     }
@@ -123,16 +130,20 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
                     break;
                 case 1:
-                    Toast.makeText(getApplicationContext(), "网络未连接", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "网络未连接", Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    dialog = new UpLoadingDialog(UpLoadSummaryActivity.this);
-                    dialog.setCancelable(false); //设置这个对话框不能被用户按[返回键]而取消掉
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
+                    try {
+                        dialog = new UpLoadingDialog(UpLoadSummaryActivity.this);
+                        dialog.setCancelable(false); //设置这个对话框不能被用户按[返回键]而取消掉
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.show();
+                    }catch (Exception e){
+                        Toast.makeText(context, "提交失败，请重试。", Toast.LENGTH_LONG).show();
+                    }
                     break;
             }
         }
@@ -143,13 +154,12 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
             @Override
             public void run() {
                 super.run();
-
                 handler.sendEmptyMessage(2);
                 if (imagePaths.size()>0) { //若有数据
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userid", String.valueOf(Lastid));//对应taskschedule和tasktake表的id
-                    params.put("username", PublicShareUserinfo.lgname);//用户名
-                    params.put("role", PublicShareUserinfo.role);//描述角色
+                    params.put("username", AutoMaticLogin.getInstance().getUserInfo(context).getLgname());//用户名
+                    params.put("role", AutoMaticLogin.getInstance().getUserInfo(context).getRole());//描述角色
                     params.put("description_title", editText_upload_taskname.getText().toString().trim());//描述主题
                     params.put("description_info", editText_upload_taskinfo.getText().toString().trim());//描述正文
                     params.put("description_remarks", editText_upload_remarks.getText().toString().trim());//描述备注
@@ -157,7 +167,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
                         case 2:
                             OkHttpUtils.post()//
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
-                                    .url("http://10.0.2.2:8080/TaskTrackingService/upload.do?")
+                                    .url(address+"upload.do?")
                                     .params(params)//
                                     .build()
                                     .execute(new MyStringCallback());
@@ -166,7 +176,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
                             OkHttpUtils.post()//
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
-                                    .url("http://10.0.2.2:8080/TaskTrackingService/upload.do?")
+                                    .url(address+"upload.do?")
                                     .params(params)//
                                     .build()
                                     .execute(new MyStringCallback());
@@ -176,7 +186,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(2)))//可以上传多个文件
-                                    .url("http://10.0.2.2:8080/TaskTrackingService/upload.do?")
+                                    .url(address+"upload.do?")
                                     .params(params)//
                                     .build()
                                     .execute(new MyStringCallback());
@@ -187,23 +197,37 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(2)))//可以上传多个文件
                                     .addFile("mFile", "server_afu.png", new File(imagePaths.get(3)))//可以上传多个文件
-                                    .url("http://10.0.2.2:8080/TaskTrackingService/upload.do?")
+                                    .url(address+"upload.do?")
                                     .params(params)//
                                     .build()
                                     .execute(new MyStringCallback());
                             break;
                         case 6:
-                            OkHttpUtils.post()//
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(2)))//可以上传多个文件
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(3)))//可以上传多个文件
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(4)))//可以上传多个文件
-                                    .addFile("mFile", "server_afu.png", new File(imagePaths.get(5)))//可以上传多个文件
-                                    .url("http://10.0.2.2:8080/TaskTrackingService/upload.do?")
-                                    .params(params)
-                                    .build()
-                                    .execute(new MyStringCallback());
+                            if (!imagePaths.get(5).equals("000000")){
+                                OkHttpUtils.post()//
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(2)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(3)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(4)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(5)))//可以上传多个文件
+                                        .url(address+"upload.do?")
+                                        .params(params)
+                                        .build()
+                                        .execute(new MyStringCallback());
+                            }else{
+                                OkHttpUtils.post()//
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(0)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(1)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(2)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(3)))//可以上传多个文件
+                                        .addFile("mFile", "server_afu.png", new File(imagePaths.get(4)))//可以上传多个文件
+                                        .url(address+"upload.do?")
+                                        .params(params)//
+                                        .build()
+                                        .execute(new MyStringCallback());
+                            }
+
                             break;
                     }
                 }
@@ -225,7 +249,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
         public void onError(Call call, Exception e, int id) {
             e.printStackTrace();
             dialog.dismiss();//取消显示进度框
-            Toast.makeText(getApplicationContext(), "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
             //tv_result.setText("onError:" + e.getMessage());
         }
 
@@ -233,7 +257,9 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
         public void onResponse(String response, int id) {
             System.out.println(response);
             dialog.dismiss();//取消显示进度框
-            Toast.makeText(getApplicationContext(), "提交任务成功", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "提交任务成功", Toast.LENGTH_LONG).show();
+            setResult(RESULT_OK,(new Intent()).setAction(uid));
+            finish(); //完成后结束此页面
             //tv_result.setText("onResponse:" + response);
             switch (id) {
                 case 100://http请求的响应码
@@ -328,7 +354,7 @@ public class UpLoadSummaryActivity extends AppCompatActivity implements View.OnC
 
             final String path=listUrls.get(position);
             if (path.equals("000000")){
-                holder.image.setImageResource(R.mipmap.ic_launcher);
+                holder.image.setImageResource(R.mipmap.upload);
             }else {
                 Glide.with(UpLoadSummaryActivity.this)
                         .load(path)

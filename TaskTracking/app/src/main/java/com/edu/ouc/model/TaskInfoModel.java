@@ -22,6 +22,8 @@ public class TaskInfoModel implements Serializable {
 	private String take_unit; //派发给的第一个部门
 	private String confirm;//'等待第一个部门确认',
 	private String task_type; //任务类型
+	private String commit_date; //任务提交时间
+	private String task_lgname; //任务发布者登录名
 	public int getId() {
 		return id;
 	}
@@ -91,8 +93,24 @@ public class TaskInfoModel implements Serializable {
 	public void setTask_type(String task_type) {
 		this.task_type = task_type;
 	}
+
+	public String getCommit_date() {
+		return commit_date;
+	}
+
+	public void setCommit_date(String commit_date) {
+		this.commit_date = commit_date;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
+	public String getTask_lgname() {
+		return task_lgname;
+	}
+
+	public void setTask_lgname(String task_lgname) {
+		this.task_lgname = task_lgname;
+	}
 }

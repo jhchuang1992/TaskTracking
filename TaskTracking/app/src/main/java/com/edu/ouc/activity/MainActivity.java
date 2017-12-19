@@ -1,6 +1,7 @@
 package com.edu.ouc.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,15 +18,32 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.edu.ouc.adapter.MyFragmentPagerAdapter;
+import com.edu.ouc.adapter.SpinnerArrayAdapter;
 import com.edu.ouc.fragment.ChatFragment;
 import com.edu.ouc.fragment.MeFragment;
 import com.edu.ouc.fragment.PlanFragment;
 import com.edu.ouc.fragment.TaskFragment;
+import com.edu.ouc.function.AddDataToServer;
+import com.edu.ouc.function.AutoMaticLogin;
+import com.edu.ouc.function.NetWorkUtils;
+import com.edu.ouc.function.SelectDataFromServer;
 import com.edu.ouc.function.SysApplication;
-import com.edu.ouc.tasktracking.R;
+import com.edu.ouc.R;
+import com.edu.ouc.model.TaskScheduleModel;
+import com.edu.ouc.model.UserInfoModel;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import cn.jpush.android.api.JPushInterface;
 
 /**
  * Created by JHC on 2017/11/23.
@@ -37,10 +55,12 @@ public class MainActivity extends  FragmentActivity implements RadioGroup.OnChec
     private ViewPager viewPager;
     private RadioGroup radioGroup;
     private RadioButton rb_Chat, rb_Me, rb_Task, rb_Plan;
+    private Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context=this;
        /**
          * RadioGroup部分
          */
@@ -68,6 +88,7 @@ public class MainActivity extends  FragmentActivity implements RadioGroup.OnChec
         //ViewPager显示第一个Fragment
         viewPager.setCurrentItem(0);
         viewPager.setOnPageChangeListener(this);
+        updateRegister(); //更新用户注册码
     }
 
     //两次返回键退出程序----开始-----
@@ -92,7 +113,7 @@ public class MainActivity extends  FragmentActivity implements RadioGroup.OnChec
     private void exit() {
         if (!isExit) {
             isExit = true;
-            Toast.makeText(getApplicationContext(), "再按一次退出程序",
+            Toast.makeText(context, "再按一次退出程序",
                     Toast.LENGTH_SHORT).show();
             // 利用handler延迟发送更改状态信息
             mHandler.sendEmptyMessageDelayed(0, 2000);
@@ -130,6 +151,20 @@ public class MainActivity extends  FragmentActivity implements RadioGroup.OnChec
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
+    Handler handler=new Handler(){
+        //0：提示出错了 1：提示未打开连接 2:加载部门下拉框适配器 3：新建任务成功  4：新建任务失败
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    Toast.makeText(context, "哎呀，出错了。。。", Toast.LENGTH_LONG).show();
+                    break;
+                case 1:
+                    Toast.makeText(context, "网络未连接", Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
     @Override
     public void onPageSelected(int position) {
         switch (position) {
@@ -153,5 +188,27 @@ public class MainActivity extends  FragmentActivity implements RadioGroup.OnChec
 
     }
     //viewPager滑动监听---结束----
-
+    public void  updateRegister(){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    NetWorkUtils netWorkUtils = new NetWorkUtils();
+                    // 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
+                    netWorkUtils.isNetworkConnected(context);
+                    if (netWorkUtils.isNetworkConnected(context) == false) { //若网络未连接
+                    } else { //若网络已连接，则判断用户名和密码是否都不为空192.164.2.102
+                        UserInfoModel userInfoModel=new UserInfoModel();
+                        userInfoModel.setId(AutoMaticLogin.getInstance().getUserInfo(context).getId());
+                        userInfoModel.setApiid(JPushInterface.getRegistrationID(getBaseContext()));
+                        Gson gson = new Gson();
+                        String jsonUserInfoModel = gson.toJson(userInfoModel);
+                        AddDataToServer addDataToServer = new AddDataToServer("updateUserInfo.do",jsonUserInfoModel);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
 }
